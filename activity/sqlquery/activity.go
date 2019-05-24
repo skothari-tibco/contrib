@@ -42,11 +42,8 @@ func New(ctx activity.InitContext) (activity.Activity, error) {
 
 	sqlStatement, err := util.NewSQLStatement(dbHelper, s.Query)
 	if err != nil {
-		return nil, err
-	}
 
-	if sqlStatement.Type() != util.StSelect {
-		return nil, fmt.Errorf("only select statement is supported")
+		return nil, err
 	}
 
 	act := &Activity{db: db, dbHelper: dbHelper, sqlStatement: sqlStatement}
@@ -55,6 +52,7 @@ func New(ctx activity.InitContext) (activity.Activity, error) {
 		ctx.Logger().Debugf("Using PreparedStatement: %s", sqlStatement.PreparedStatementSQL())
 		act.stmt, err = db.Prepare(sqlStatement.PreparedStatementSQL())
 		if err != nil {
+			fmt.Println("Here")
 			return nil, err
 		}
 	}
