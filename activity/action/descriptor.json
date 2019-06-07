@@ -1,0 +1,14 @@
+{
+    "name": "flogo-run-syncaction",
+    "type": "flogo:activity",
+    "version": "0.9.0",
+    "title": "Run a Sync Action",
+    "description": "Run a SyncAction in activity",
+    "homepage": "https://github.com/project-flogo/contrib/tree/master/activity/actreply",
+    "reply":true,
+    "settings":[
+      {
+      }
+    ]
+  }
+  

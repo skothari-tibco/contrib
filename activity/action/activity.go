@@ -1,12 +1,13 @@
 package action
 
 import (
+	"context"
 	"errors"
-	"fmt"
+	"path"
 
+	"github.com/project-flogo/core/action"
 	"github.com/project-flogo/core/activity"
 	"github.com/project-flogo/core/data/metadata"
-	"github.com/project-flogo/fps/pipeline"
 )
 
 func init() {
@@ -45,28 +46,39 @@ func (a *Activity) Metadata() *activity.Metadata {
 func (a *Activity) Eval(ctx activity.Context) (done bool, err error) {
 
 	input := &Input{}
+	out := &Output{}
+	err = ctx.GetInputObject(input)
+	if err != nil {
+		return true, err
+	}
+	if input.Input == nil {
+		return true, errors.New("Input not here")
 
-	input.FPSInput = make(map[string]interface{})
-	input.FPSInput["input"] = 4
-
-	res := pipeline.GetManager().GetResource(a.settings.ResURI)
-	if res != nil {
-		def, ok := res.Object().(*pipeline.Definition)
-		if !ok {
-			return true, errors.New("unable to resolve fps: " + a.settings.ResURI)
-		}
-		inst := pipeline.NewInstance(def, "instId", ctx.Logger())
-
-		output, err := inst.Run(input.FPSInput)
-
-		if err != nil {
-			return true, err
-		}
-
-		fmt.Println("Output..", output)
 	}
 
-	ctx.Logger().Info("Something")
+	factory := action.GetFactory(a.settings.Ref)
 
-	return true, nil
+	var act action.Action
+	settingsURI := make(map[string]interface{})
+
+	switch path.Base(a.settings.Ref) {
+	case "fps":
+		settingsURI["catalystMlURI"] = a.settings.ResURI
+	case "flow":
+		settingsURI["flowURI"] = a.settings.ResURI
+	}
+
+	act, _ = factory.New(&action.Config{Settings: settingsURI})
+
+	if syncAct, ok := act.(action.SyncAction); ok {
+		result, _ := syncAct.Run(context.Background(), input.Input)
+
+		out.Output = result
+
+		ctx.SetOutputObject(out)
+
+		return true, nil
+	}
+
+	return true, errors.New("Not a Sync Action")
 }

@@ -5,19 +5,21 @@ import (
 )
 
 type Settings struct {
+	Ref    string `md:"ref"`
 	ResURI string `md:"resURI"`
 }
 
 type Input struct {
-	FPSInput map[string]interface{} `md:"fpsinput"`
+	Input map[string]interface{} `md:"input"`
 }
 
 type Output struct {
+	Output map[string]interface{} `md:"output"`
 }
 
 func (i *Input) ToMap() map[string]interface{} {
 	return map[string]interface{}{
-		"fpsinput": i.FPSInput,
+		"input": i.Input,
 	}
 }
 
@@ -25,7 +27,7 @@ func (i *Input) FromMap(values map[string]interface{}) error {
 
 	var err error
 
-	i.FPSInput, err = coerce.ToObject(values["fpsinput"])
+	i.Input, err = coerce.ToObject(values["input"])
 	if err != nil {
 		return err
 	}
@@ -34,12 +36,19 @@ func (i *Input) FromMap(values map[string]interface{}) error {
 }
 
 func (o *Output) ToMap() map[string]interface{} {
-	return map[string]interface{}{}
+	return map[string]interface{}{
+		"output": o.Output,
+	}
 }
 
 func (o *Output) FromMap(values map[string]interface{}) error {
 
-	//var err error
+	var err error
+
+	o.Output, err = coerce.ToObject(values["output"])
+	if err != nil {
+		return err
+	}
 
 	return nil
 }
