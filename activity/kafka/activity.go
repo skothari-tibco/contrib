@@ -16,8 +16,9 @@ var activityMd = activity.ToMetadata(&Input{}, &Output{})
 
 // MyActivity is a stub for your Activity implementation
 type KafkaActivity struct {
-	conn  *KafkaConnection
+	//conn  *KafkaConnection
 	topic string
+	conn connection.Manager
 }
 
 func New(ctx activity.InitContext) (activity.Activity, error) {
@@ -26,7 +27,7 @@ func New(ctx activity.InitContext) (activity.Activity, error) {
 	if err != nil {
 		return nil, err
 	}
-
+	
 	conn, err := getKafkaConnection(ctx.Logger(), settings)
 	if err != nil {
 		//ctx.Logger().Errorf("Kafka parameters initialization got error: [%s]", err.Error())
@@ -49,7 +50,7 @@ func (act *KafkaActivity) Eval(ctx activity.Context) (done bool, err error) {
 	if err != nil {
 		return true, err
 	}
-
+	
 	if input.Message == "" {
 		return false, fmt.Errorf("no message to publish")
 	}

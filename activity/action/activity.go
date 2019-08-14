@@ -3,11 +3,13 @@ package action
 import (
 	"context"
 	"errors"
+	"fmt"
 	"path"
 
 	"github.com/project-flogo/core/action"
 	"github.com/project-flogo/core/activity"
 	"github.com/project-flogo/core/data/metadata"
+	"github.com/project-flogo/core/support"
 )
 
 func init() {
@@ -55,23 +57,26 @@ func (a *Activity) Eval(ctx activity.Context) (done bool, err error) {
 		return true, errors.New("Input not here")
 
 	}
+	ref, _ := support.GetAliasRef("action", a.settings.Ref[1:])
 
-	factory := action.GetFactory(a.settings.Ref)
+	factory := action.GetFactory(ref)
 
 	var act action.Action
 	settingsURI := make(map[string]interface{})
 
-	switch path.Base(a.settings.Ref) {
-	case "fps":
-		settingsURI["catalystMlURI"] = a.settings.ResURI
-	case "flow":
-		settingsURI["flowURI"] = a.settings.ResURI
+	switch path.Base(a.settings.Ref[1:]) {
+	case "action":
+		settingsURI["catalystMlURI"] = a.settings.ResURI //a.settings.ResURI
+
 	}
 
 	act, _ = factory.New(&action.Config{Settings: settingsURI})
 
 	if syncAct, ok := act.(action.SyncAction); ok {
-		result, _ := syncAct.Run(context.Background(), input.Input)
+		result, err := syncAct.Run(context.Background(), input.ToMap())
+		if err != nil {
+			fmt.Println("Error...", err)
+		}
 
 		out.Output = result
 

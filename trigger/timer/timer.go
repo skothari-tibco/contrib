@@ -12,8 +12,8 @@ import (
 )
 
 type HandlerSettings struct {
-	StartInterval  string `md:"startDelay"`      // The start delay (ex. 1m, 1h, etc.), immediate if not specified
-	RepeatInterval string `md:"repeatInterval"`  // The repeat interval (ex. 1m, 1h, etc.), doesn't repeat if not specified
+	StartInterval  string `md:"startDelay"`     // The start delay (ex. 1m, 1h, etc.), immediate if not specified
+	RepeatInterval string `md:"repeatInterval"` // The repeat interval (ex. 1m, 1h, etc.), doesn't repeat if not specified
 }
 
 var triggerMd = trigger.NewMetadata(&HandlerSettings{})
@@ -113,7 +113,7 @@ func (t *Trigger) scheduleOnce(handler trigger.Handler, settings *HandlerSetting
 	fn := func() {
 		t.logger.Debug("Executing \"Once\" timer trigger")
 
-		_, err := handler.Handle(context.Background(), nil)
+		_, err := handler.Handle(context.WithValue(context.Background(), "sample", "sample"), nil)
 		if err != nil {
 			t.logger.Error("Error running handler: ", err.Error())
 		}

@@ -12,8 +12,8 @@ func init() {
 }
 
 type Input struct {
-	Message    string `md:"message"`     // The message to log
-	AddDetails bool   `md:"addDetails"`  // Append contextual execution information to the log message
+	Message    string `md:"message"`    // The message to log
+	AddDetails bool   `md:"addDetails"` // Append contextual execution information to the log message
 }
 
 func (i *Input) ToMap() map[string]interface{} {
@@ -57,6 +57,7 @@ func (a *Activity) Eval(ctx activity.Context) (done bool, err error) {
 	input := &Input{}
 	ctx.GetInputObject(input)
 
+	fmt.Println("Sample..", out, exist)
 	msg := input.Message
 
 	if input.AddDetails {
