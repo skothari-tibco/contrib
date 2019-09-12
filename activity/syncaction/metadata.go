@@ -1,11 +1,11 @@
-package action
+package syncaction
 
 import (
 	"github.com/project-flogo/core/data/coerce"
 )
 
 type Settings struct {
-	Ref    string `md:"ref"`
+	Ref    string `md:"ref"` //The ref to action
 	ResURI string `md:"resURI"`
 }
 

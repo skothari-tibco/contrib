@@ -1,10 +1,9 @@
-package action
+package syncaction
 
 import (
 	"context"
 	"errors"
 	"fmt"
-	"path"
 
 	"github.com/project-flogo/core/action"
 	"github.com/project-flogo/core/activity"
@@ -64,11 +63,7 @@ func (a *Activity) Eval(ctx activity.Context) (done bool, err error) {
 	var act action.Action
 	settingsURI := make(map[string]interface{})
 
-	switch path.Base(a.settings.Ref[1:]) {
-	case "action":
-		settingsURI["catalystMlURI"] = a.settings.ResURI //a.settings.ResURI
-
-	}
+	settingsURI["catalystMlURI"] = a.settings.ResURI //a.settings.ResURI
 
 	act, _ = factory.New(&action.Config{Settings: settingsURI})
 
