@@ -56,7 +56,12 @@ func (a *Activity) Eval(ctx activity.Context) (done bool, err error) {
 		return true, errors.New("Input not here")
 
 	}
-	ref, _ := support.GetAliasRef("action", a.settings.Ref[1:])
+	var ref string
+	if a.settings.Ref[0] == '#' {
+		ref, _ = support.GetAliasRef("action", a.settings.Ref[1:])
+	} else {
+		ref, _ = support.GetAliasRef("action", a.settings.Ref)
+	}
 
 	factory := action.GetFactory(ref)
 
