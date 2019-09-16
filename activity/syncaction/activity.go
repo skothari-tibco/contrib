@@ -52,16 +52,8 @@ func (a *Activity) Eval(ctx activity.Context) (done bool, err error) {
 	if err != nil {
 		return true, err
 	}
-	if input.Input == nil {
-		return true, errors.New("Input not here")
 
-	}
-	var ref string
-	if a.settings.Ref[0] == '#' {
-		ref, _ = support.GetAliasRef("action", a.settings.Ref[1:])
-	} else {
-		ref, _ = support.GetAliasRef("action", a.settings.Ref)
-	}
+	ref, _ := support.GetAliasRef("action", a.settings.Ref[1:])
 
 	factory := action.GetFactory(ref)
 
@@ -70,12 +62,30 @@ func (a *Activity) Eval(ctx activity.Context) (done bool, err error) {
 
 	settingsURI["catalystMlURI"] = a.settings.ResURI //a.settings.ResURI
 
-	act, _ = factory.New(&action.Config{Settings: settingsURI})
+	act, err = factory.New(&action.Config{Settings: settingsURI})
+
+	if err != nil || act == nil {
+		ctx.Logger().Infof("Error in Inialtization of Sync Action %v", err)
+		return false, err
+	}
+	inputMap := make(map[string]interface{})
+	_, isMap := input.Input.(map[string]interface{})
+	if !isMap {
+		inputMap["input"] = input.Input
+	}
 
 	if syncAct, ok := act.(action.SyncAction); ok {
-		result, err := syncAct.Run(context.Background(), input.ToMap())
+		var result map[string]interface{}
+
+		if !isMap {
+			result, err = syncAct.Run(context.Background(), inputMap)
+		} else {
+			result, err = syncAct.Run(context.Background(), input.Input.(map[string]interface{}))
+		}
+
 		if err != nil {
-			fmt.Println("Error...", err)
+			ctx.Logger().Infof("Error in Running of Sync Action %v", err)
+			return true, fmt.Errorf("Error in Running Sync Action: %v", err)
 		}
 
 		out.Output = result
