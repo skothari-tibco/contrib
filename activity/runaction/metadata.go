@@ -1,4 +1,4 @@
-package syncaction
+package runaction
 
 import (
 	"github.com/project-flogo/core/data/coerce"

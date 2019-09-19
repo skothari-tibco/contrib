@@ -1,4 +1,4 @@
-module github.com/project-flogo/contrib/activity/syncaction
+module github.com/project-flogo/contrib/activity/runaction
 
 go 1.12
 

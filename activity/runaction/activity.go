@@ -1,4 +1,4 @@
-package syncaction
+package runaction
 
 import (
 	"context"
