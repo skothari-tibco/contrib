@@ -5,13 +5,11 @@ import (
 )
 
 type Settings struct {
-	Ref    string `md:"ref,required"` //The ref to action
-	UriType string `md:"uriType,required"`
-	ResURI string `md:"resURI,required"`
+	ActionRef      string                 `md:"actionRef,required"` //The ref to action
+	ActionSettings map[string]interface{} `md:"actionSettings,required"`
 }
 
 type Input struct {
-	Input interface{} `md:"input"`
 }
 
 type Output struct {
@@ -19,15 +17,10 @@ type Output struct {
 }
 
 func (i *Input) ToMap() map[string]interface{} {
-	return map[string]interface{}{
-		"input": i.Input,
-	}
+	return nil
 }
 
 func (i *Input) FromMap(values map[string]interface{}) error {
-
-	i.Input = values["input"]
-
 	return nil
 }
 

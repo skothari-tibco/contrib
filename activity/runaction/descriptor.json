@@ -26,16 +26,12 @@
       }
     ],
     "input":[
-      {
-        "name": "input",
-        "type": "any",
-        "description" : "The input to the action being called"
-      }
+     
     ],
     "output":[
       {
         "name": "output",
-        "type": "any",
+        "type": "object",
         "description" : "The output of the action being called"
       }
     ]
